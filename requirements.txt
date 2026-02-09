@@ -1,0 +1,25 @@
+# Core XBRL Processing
+arelle-release
+
+# XML Processing
+lxml
+xmlschema
+
+# Data Handling
+polars
+pyarrow
+
+# Graph
+neo4j
+
+# Ontology
+rdflib
+
+# Validation
+pydantic
+
+# Orchestration (future phases)
+prefect
+
+# Utilities
+python-dotenv

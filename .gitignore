@@ -1,0 +1,28 @@
+# Virtual Environment
+venv/
+.env/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Data artifacts
+data/
+*.parquet
+
+# Neo4j
+neo4j_data/
+
+# misc / temp
+temp/
