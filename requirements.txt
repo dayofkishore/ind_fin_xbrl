@@ -18,6 +18,10 @@ rdflib
 # Validation
 pydantic
 
+# Testing
+pytest
+pytest-cov
+
 # Orchestration (future phases)
 prefect
 

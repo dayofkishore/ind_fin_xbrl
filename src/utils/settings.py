@@ -1,6 +1,7 @@
 from pathlib import Path
 from datetime import datetime
-from pydantic import BaseSettings, Field, validator
+from pydantic import Field, field_validator, ConfigDict
+from pydantic_settings import BaseSettings
 from dotenv import load_dotenv
 import os
 import sys
@@ -29,6 +30,13 @@ class Settings(BaseSettings):
 
     project_name: str = Field(default="Ind_Fin_XBRL")
     environment: str = Field(default="development")
+    
+    # ---------------------------------------------------------------
+    # Root Paths
+    # ---------------------------------------------------------------
+    
+    root_path: Path = Field(default=PROJECT_ROOT)
+    data_path: Path = Field(default=PROJECT_ROOT / "data")
 
     # ---------------------------------------------------------------
     # Data Paths
@@ -44,9 +52,9 @@ class Settings(BaseSettings):
     # Neo4j Configuration
     # ---------------------------------------------------------------
 
-    neo4j_uri: str = Field(..., env="NEO4J_URI")
-    neo4j_user: str = Field(..., env="NEO4J_USER")
-    neo4j_password: str = Field(..., env="NEO4J_PASSWORD")
+    neo4j_uri: str = Field(default="bolt://localhost:7687", validation_alias="NEO4J_URI")
+    neo4j_user: str = Field(default="neo4j", validation_alias="NEO4J_USER")
+    neo4j_password: str = Field(default="password", validation_alias="NEO4J_PASSWORD")
 
     # ---------------------------------------------------------------
     # Runtime Metadata (Deterministic Capture)
@@ -56,19 +64,23 @@ class Settings(BaseSettings):
     python_version: str = Field(default_factory=lambda: sys.version)
 
     # ---------------------------------------------------------------
+    # ---------------------------------------------------------------
     # Validation
     # ---------------------------------------------------------------
 
-    @validator("environment")
+    @field_validator("environment")
+    @classmethod
     def validate_environment(cls, v):
         allowed = {"development", "staging", "production"}
         if v not in allowed:
             raise ValueError(f"environment must be one of {allowed}")
         return v
 
-    class Config:
-        env_file = ENV_PATH
-        case_sensitive = True
+    model_config = ConfigDict(
+        env_file=str(ENV_PATH),
+        case_sensitive=False,
+        extra="ignore"
+    )
 
 
 # -------------------------------------------------------------------
@@ -76,3 +88,8 @@ class Settings(BaseSettings):
 # -------------------------------------------------------------------
 
 settings = Settings()
+
+
+def get_settings() -> Settings:
+    """Get the settings singleton instance."""
+    return settings
